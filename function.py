@@ -13,14 +13,23 @@ def list_of_files(directory, extension):
 
 def minuscule(fichier_ancien, fichier_nouveau):
     text = open_file(fichier_ancien)
-    write_to_file(fichier_nouveau, text.strip(",."))
+    write_to_file(fichier_nouveau, text.strip(","))
 
 
 def open_file(path):
+    """
+    :param path: Le chemin d'accès du fichier à importer
+    :return:
+    """
     with open(path, "r") as file:
         return file.read()
 
 
 def write_to_file(path, text):
+    """
+    :param path: chemin d'accès du fichier que l'on doit modifier
+    :param text: le texte à ajouter au fichier
+    :return:
+    """
     with open(path, "w") as file:
         file.write(text)

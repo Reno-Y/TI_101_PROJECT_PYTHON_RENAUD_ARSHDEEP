@@ -1,11 +1,12 @@
 import os
-from function import list_of_files, minuscule
+from function import list_of_files, minuscule, open_file, write_to_file
 
 directory = "./speeches"
 copy_folder = "./cleaned"
 
 speechesNominationList = list_of_files(directory, "txt")
-copy_truc = list_of_files(copy_folder, "txt")
+
+cleanedNominationList = list_of_files(copy_folder,"txt")
 
 list_names = []
 names = []
@@ -31,9 +32,13 @@ print("Voici les noms des présidents ayant fait des discours : ")
 for i in range(len(president_names)):
 
     print(president_names[i], end=", ")
+print()
 
-for i in speechesNominationList:
+print(cleanedNominationList)
 
-    for y in copy_truc:
+"""for file in speechesNominationList :
+    open_file(file)
+    for destFile in 
+        minuscule(file, "./cleaned/Nomination_Chirac1_cleaned.txt" )
 
-        minuscule(speechesNominationList[i], copy_truc[y])
+"""

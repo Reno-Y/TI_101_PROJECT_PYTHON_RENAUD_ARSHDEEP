@@ -11,25 +11,36 @@ def list_of_files(directory, extension):
     return files_names
 
 
-def minuscule(fichier_ancien, fichier_nouveau):
-    text = open_file(fichier_ancien)
-    write_to_file(fichier_nouveau, text.strip(","))
-
-
 def open_file(path):
-    """
-    :param path: Le chemin d'accès du fichier à importer
-    :return:
-    """
     with open(path, "r") as file:
         return file.read()
 
 
 def write_to_file(path, text):
-    """
-    :param path: chemin d'accès du fichier que l'on doit modifier
-    :param text: le texte à ajouter au fichier
-    :return:
-    """
     with open(path, "w") as file:
         file.write(text)
+
+
+def copy(old_file, new_file):
+    text = open_file(old_file)
+    write_to_file(new_file, text)
+
+
+def clean(file):
+    text = open_file(file)
+    characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' '}
+    cleaned_text = ''.join(characters_to_remove.get(char, char) for char in text)
+    write_to_file(file, cleaned_text)
+
+
+def remove_accent(file):
+    text = open_file(file)
+    accent = {'é': 'e', 'è': 'e', 'ê': 'e', 'à': 'a', 'ù': 'u', 'û': 'u', 'ç': 'c', 'ô': 'o', 'î': 'i', 'ï': 'i',
+              'â': 'a'}
+    text_without_accent = ''.join(accent.get(char) for char in text)
+    write_to_file(file, text_without_accent)
+
+
+def lowercase(file):
+    text = open_file(file)
+    write_to_file(file, text.lower())

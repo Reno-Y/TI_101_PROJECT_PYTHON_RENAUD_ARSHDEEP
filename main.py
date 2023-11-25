@@ -1,12 +1,11 @@
 import os
-from function import list_of_files, minuscule, open_file, write_to_file
+from function import list_of_files, lowercase, copy, clean, remove_accent
 
 directory = "./speeches"
 copy_folder = "./cleaned"
 
 speechesNominationList = list_of_files(directory, "txt")
-
-cleanedNominationList = list_of_files(copy_folder,"txt")
+cleanedNominationList = list_of_files(copy_folder, "txt")
 
 list_names = []
 names = []
@@ -30,15 +29,24 @@ president_names = list(president_names)
 print("Voici les noms des présidents ayant fait des discours : ")
 
 for i in range(len(president_names)):
-
     print(president_names[i], end=", ")
-print()
 
-print(cleanedNominationList)
+list_import = []
+for i in range(len(speechesNominationList)):
+    cara = "./speeches/" + str(speechesNominationList[i])
+    list_import.append(cara)
 
-"""for file in speechesNominationList :
-    open_file(file)
-    for destFile in 
-        minuscule(file, "./cleaned/Nomination_Chirac1_cleaned.txt" )
+list_export = []
+for i in range(len(cleanedNominationList)):
+    cara = "./cleaned/" + str(cleanedNominationList[i])
+    list_export.append(cara)
 
-"""
+for i in range(len(list_import)):
+    copy(list_import[i], list_export[i])
+    clean(list_export[i])
+    remove_accent(list_export[i])
+    #lowercase(list_export[i])
+
+
+
+

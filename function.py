@@ -97,16 +97,25 @@ def idf(list_export):
     return tf_score
 
 
-def tf_idf(tf_total_input, idf_total):
+def tf_idf(list_directory):
+    files = list_directory
 
-    matrix_tfidf = {}
-    for file_name, tf_values in tf_total_input.items():
-        tf_idf_dico = {}
-        for word, freq_tf in tf_values.items():
-            idf_value = idf_total[file_name][word]
-            tf_idf_value = freq_tf * idf_value
-            tf_idf_dico[word] = tf_idf_value
-        matrix_tfidf[file_name] = tf_idf_dico
+    tf_score = tf_total(files)
+    idf_score = idf(files)
 
-    return matrix_tfidf
+    unique_words = list(set(tf_score.keys()))
+
+    tfidf = []
+
+    for word in unique_words:
+        tfidf_line = []
+        for file in files:
+            tf = tf_a_file(file)
+            tf_value = tf.get(word, 0)
+            idf_value = idf_score.get(word, 0)
+            tfidf_value = tf_value * idf_value
+            tfidf_line.append(tfidf_value)
+        tfidf.append(tfidf_line)
+
+    return tfidf
 

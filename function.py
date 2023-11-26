@@ -10,6 +10,22 @@ def list_of_files(directory, extension):
     return files_names
 
 
+def list_of_import(speecherNominationList):
+    temp_list = []
+    for i in range(len(speecherNominationList)):
+        file_path = "./speeches/" + str(speecherNominationList[i])
+        temp_list.append(file_path)
+    return temp_list
+
+
+def list_of_export(cleanedNominationList):
+    temp_list = []
+    for i in range(len(cleanedNominationList)):
+        file_path = "./cleaned/" + str(cleanedNominationList[i])
+        temp_list.append(file_path)
+    return temp_list
+
+
 def open_file(path):
     with open(path, "r", encoding='utf-8') as file:
         return file.read()
@@ -38,17 +54,18 @@ def lowercase(file, destination_file):
     write_to_file(destination_file, output)
 
 
-def tf(chaine):
+def tf(words):
     word_count = {}
-    count = 1
-    for mot in chaine:
-        if mot not in word_count:
-            word_count.update({mot: count})
-        elif mot in word_count:
-            word_count[mot] += 1
+
+    for word in words:
+        if word in word_count:
+            word_count[word] += 1
+        else:
+            word_count[word] = 1
+
     return word_count
 
 
 def tf_a_file(file):
-    text = open_file(file).split(' ')
-    return tf(text)
+    mots = open_file(file).split()
+    return tf(mots)

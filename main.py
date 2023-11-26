@@ -1,19 +1,20 @@
-from function import list_of_files, lowercase, copy, remove_punctuation, tf_a_file
+from function import list_of_files, lowercase, copy, remove_punctuation, tf_a_file, list_of_import, list_of_export
 
-directory = "./speeches"
-copy_folder = "./cleaned"
+speeches_directory = "./speeches"
+cleaned_directory = "./cleaned"
 
-speechesNominationList = list_of_files(directory, "txt")
-cleanedNominationList = list_of_files(copy_folder, "txt")
+speechesNominationList = list_of_files(speeches_directory, "txt")
+cleanedNominationList = list_of_files(cleaned_directory, "txt")
 
-list_names = []
+listNames = []
 names = []
+
 
 for i in range(len(speechesNominationList)):
     speeches_without_numbers = str(speechesNominationList[i][11:-4])
-    list_names.append(speeches_without_numbers)
+    listNames.append(speeches_without_numbers)
 
-for i in list_names:
+for i in listNames:
 
     if i[-1].isdigit():
         name = i[:-1]
@@ -22,24 +23,19 @@ for i in list_names:
 
     names.append(name)
 
-president_names = set(names)
-president_names = list(president_names)
+
+presidentNames = set(names)
+presidentNames = list(presidentNames)
 
 print("Voici les noms des présidents ayant fait des discours : ")
 
-for i in range(len(president_names)):
-    print(president_names[i], end=", ")
+for i in range(len(presidentNames)):
+    print(presidentNames[i], end=", ")
 print("\n")
 
-list_import = []
-for i in range(len(speechesNominationList)):
-    cara = "./speeches/" + str(speechesNominationList[i])
-    list_import.append(cara)
+list_import = list_of_import(speechesNominationList)
+list_export = list_of_export(cleanedNominationList)
 
-list_export = []
-for i in range(len(cleanedNominationList)):
-    cara = "./cleaned/" + str(cleanedNominationList[i])
-    list_export.append(cara)
 
 for i in range(len(list_import)):
     copy(list_import[i], list_export[i])
@@ -47,4 +43,3 @@ for i in range(len(list_import)):
     lowercase(list_export[i], list_export[i])
 
 print(tf_a_file("./cleaned/Nomination_Sarkozy_cleaned.txt"))
-

@@ -1,4 +1,6 @@
 import os
+import math
+from collections import defaultdict
 
 
 def list_of_files(directory, extension):
@@ -69,3 +71,23 @@ def tf(words):
 def tf_a_file(file):
     mots = open_file(file).split()
     return tf(mots)
+
+
+
+
+def idf(list_export):
+    tf_score = {}
+    for file in list_export:
+        tf = tf_a_file(file)
+
+        for term, term_freq in tf.items():
+            if term not in tf_score:
+                tf_score[term] = term_freq
+            else:
+                tf_score[term] += term_freq
+    nb_documents = len(list_export)
+
+    for i in tf_score:
+        tf_score[i] = math.log10((nb_documents / tf_score[i]) + 1)
+    return tf_score
+

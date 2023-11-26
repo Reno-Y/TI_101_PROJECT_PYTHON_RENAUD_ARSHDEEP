@@ -44,12 +44,14 @@ for i in range(len(list_import)):
 
 
 tf_score = tf_total(list_export)
+idf_score = idf(list_export)
+
+""""
 matrix_tfidf = tf_idf(list_export)
 unique_words = list(set(tf_score.keys()))
-"""""
-for i, word in enumerate(unique_words):
-    print(f"{word}: {matrix_tfidf[i]}")
-"""
 
 for i, word in enumerate(unique_words):
     print(f"{word} : {matrix_tfidf[i]}")
+"""
+
+print(tf_idf(tf_score,idf_score))

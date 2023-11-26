@@ -88,15 +88,8 @@ def tf_total(list_export):
 
 
 def idf(list_export):
-    tf_score = {}
-    for file in list_export:
-        TF = tf_a_file(file)
+    tf_score = tf_total(list_export)
 
-        for term, term_freq in TF.items():
-            if term not in tf_score:
-                tf_score[term] = term_freq
-            else:
-                tf_score[term] += term_freq
     nb_documents = len(list_export)
 
     for i in tf_score:
@@ -104,25 +97,16 @@ def idf(list_export):
     return tf_score
 
 
-def tf_idf(list_directory):
-    files = list_directory
+def tf_idf(tf_total_input, idf_total):
 
-    tf_score = tf_total(files)
-    idf_score = idf(files)
+    matrix_tfidf = {}
+    for file_name, tf_values in tf_total_input.items():
+        tf_idf_dico = {}
+        for word, freq_tf in tf_values.items():
+            idf_value = idf_total[file_name][word]
+            tf_idf_value = freq_tf * idf_value
+            tf_idf_dico[word] = tf_idf_value
+        matrix_tfidf[file_name] = tf_idf_dico
 
-    unique_words = list(set(tf_score.keys()))
-
-    tfidf = []
-
-    for word in unique_words:
-        tfidf_line = []
-        for file in files:
-            tf = tf_a_file(file)
-            tf_value = tf.get(word, 0)
-            idf_value = idf_score.get(word, 0)
-            tfidf_value = tf_value * idf_value
-            tfidf_line.append(tfidf_value)
-        tfidf.append(tfidf_line)
-
-    return tfidf
+    return matrix_tfidf
 

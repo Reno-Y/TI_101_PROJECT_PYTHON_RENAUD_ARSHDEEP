@@ -1,5 +1,4 @@
-import os
-from function import list_of_files, lowercase, copy, clean, remove_accent
+from function import list_of_files, lowercase, copy, remove_punctuation, tf_a_file
 
 directory = "./speeches"
 copy_folder = "./cleaned"
@@ -30,6 +29,7 @@ print("Voici les noms des présidents ayant fait des discours : ")
 
 for i in range(len(president_names)):
     print(president_names[i], end=", ")
+print("\n")
 
 list_import = []
 for i in range(len(speechesNominationList)):
@@ -43,10 +43,8 @@ for i in range(len(cleanedNominationList)):
 
 for i in range(len(list_import)):
     copy(list_import[i], list_export[i])
-    clean(list_export[i])
-    remove_accent(list_export[i])
-    #lowercase(list_export[i])
+    remove_punctuation(list_export[i])
+    lowercase(list_export[i], list_export[i])
 
-
-
+print(tf_a_file("./cleaned/Nomination_Sarkozy_cleaned.txt"))
 

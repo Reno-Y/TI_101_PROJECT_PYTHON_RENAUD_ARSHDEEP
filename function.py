@@ -7,17 +7,16 @@ def list_of_files(directory, extension):
     for filename in os.listdir(directory):
         if filename.endswith(extension):
             files_names.append(filename)
-
     return files_names
 
 
 def open_file(path):
-    with open(path, "r") as file:
+    with open(path, "r", encoding='utf-8') as file:
         return file.read()
 
 
 def write_to_file(path, text):
-    with open(path, "w") as file:
+    with open(path, "w", encoding='utf-8') as file:
         file.write(text)
 
 
@@ -26,21 +25,30 @@ def copy(old_file, new_file):
     write_to_file(new_file, text)
 
 
-def clean(file):
+def remove_punctuation(file):
     text = open_file(file)
-    characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' '}
+    characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' ', ':': ' ', ';': ' '}
     cleaned_text = ''.join(characters_to_remove.get(char, char) for char in text)
     write_to_file(file, cleaned_text)
 
 
-def remove_accent(file):
+def lowercase(file, destination_file):
     text = open_file(file)
-    accent = {'é': 'e', 'è': 'e', 'ê': 'e', 'à': 'a', 'ù': 'u', 'û': 'u', 'ç': 'c', 'ô': 'o', 'î': 'i', 'ï': 'i',
-              'â': 'a'}
-    text_without_accent = ''.join(accent.get(char) for char in text)
-    write_to_file(file, text_without_accent)
+    output = text.lower()
+    write_to_file(destination_file, output)
 
 
-def lowercase(file):
-    text = open_file(file)
-    write_to_file(file, text.lower())
+def tf(chaine):
+    word_count = {}
+    count = 1
+    for mot in chaine:
+        if mot not in word_count:
+            word_count.update({mot: count})
+        elif mot in word_count:
+            word_count[mot] += 1
+    return word_count
+
+
+def tf_a_file(file):
+    text = open_file(file).split(' ')
+    return tf(text)

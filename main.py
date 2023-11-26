@@ -1,7 +1,7 @@
 import math
 
 from function import list_of_files, lowercase, copy, remove_punctuation, tf_a_file, list_of_import, list_of_export, idf, \
-    tf_total
+    tf_total, tf_idf
 
 speeches_directory = "./speeches"
 cleaned_directory = "./cleaned"
@@ -42,15 +42,14 @@ for i in range(len(list_import)):
     remove_punctuation(list_export[i])
     lowercase(list_export[i], list_export[i])
 
-idf = idf(list_export)
-print(idf)
 
+tf_score = tf_total(list_export)
+matrix_tfidf = tf_idf(list_export)
+unique_words = list(set(tf_score.keys()))
+"""""
+for i, word in enumerate(unique_words):
+    print(f"{word}: {matrix_tfidf[i]}")
+"""
 
-
-total_tf = {}
-for file in list_export:
-    temp = tf_a_file(file)
-    for term, frequency in dict.items(temp):
-        total_tf[term] = frequency
-
-print(total_tf)
+for i, word in enumerate(unique_words):
+    print(f"{word} : {matrix_tfidf[i]}")

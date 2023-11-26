@@ -45,7 +45,8 @@ def copy(old_file, new_file):
 
 def remove_punctuation(file):
     text = open_file(file)
-    characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' ', ':': ' ', ';': ' '}
+    characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' ', ':': ' ', ';': ' ', '`': ' ',
+                            '?': ' '}
     cleaned_text = ''.join(characters_to_remove.get(char, char) for char in text)
     write_to_file(file, cleaned_text)
 
@@ -73,14 +74,25 @@ def tf_a_file(file):
     return tf(mots)
 
 
+def tf_total(list_export):
+    tf_score = {}
+    for file in list_export:
+        tf = tf_a_file(file)
+
+        for term, frequency in tf.items():
+            if term not in tf_score:
+                tf_score[term] = frequency
+            else:
+                tf_score[term] += frequency
+    return (tf_score)
 
 
 def idf(list_export):
     tf_score = {}
     for file in list_export:
-        tf = tf_a_file(file)
+        TF = tf_a_file(file)
 
-        for term, term_freq in tf.items():
+        for term, term_freq in TF.items():
             if term not in tf_score:
                 tf_score[term] = term_freq
             else:
@@ -90,4 +102,27 @@ def idf(list_export):
     for i in tf_score:
         tf_score[i] = math.log10((nb_documents / tf_score[i]) + 1)
     return tf_score
+
+
+def tf_idf(list_directory):
+    files = list_directory
+
+    tf_score = tf_total(files)
+    idf_score = idf(files)
+
+    unique_words = list(set(tf_score.keys()))
+
+    tfidf = []
+
+    for word in unique_words:
+        tfidf_line = []
+        for file in files:
+            tf = tf_a_file(file)
+            tf_value = tf.get(word, 0)
+            idf_value = idf_score.get(word, 0)
+            tfidf_value = tf_value * idf_value
+            tfidf_line.append(tfidf_value)
+        tfidf.append(tfidf_line)
+
+    return tfidf
 

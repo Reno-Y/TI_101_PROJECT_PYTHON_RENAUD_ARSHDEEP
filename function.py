@@ -61,9 +61,7 @@ def tf(words):
     word_count = {}
 
     for word in words:
-        if word in word_count:
-            word_count[word] += 1
-        else:
+        if word not in word_count:
             word_count[word] = 1
 
     return word_count
@@ -89,21 +87,21 @@ def tf_total(list_export):
 
 def idf(list_export):
     tf_score = tf_total(list_export)
-
     nb_documents = len(list_export)
 
     for i in tf_score:
-        tf_score[i] = math.log10((nb_documents / tf_score[i]) + 1)
+        tf_score[i] = round(math.log10((nb_documents / tf_score[i]) + 1), 2)
     return tf_score
 
 
-def tf_idf(list_directory):
-    files = list_directory
+def tf_idf(list_of_file_in_directory):
+    files = list_of_file_in_directory
 
     tf_score = tf_total(files)
     idf_score = idf(files)
 
     unique_words = list(set(tf_score.keys()))
+    print(unique_words)
 
     tfidf = []
 
@@ -119,3 +117,16 @@ def tf_idf(list_directory):
 
     return tfidf
 
+
+
+'''''''''
+def tf_idf2(list_export):
+    tf_score = tf_total(list_export)
+    idf_score = idf(list_export)
+    unique_words = list(set(tf_score.keys()))
+
+    for i in unique_words:
+        for j in list_export:
+            tf_idf[i][j] = tf_score[i][j] * idf_score[i]
+    return tf_idf
+'''

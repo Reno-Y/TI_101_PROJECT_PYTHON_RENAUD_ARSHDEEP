@@ -1,7 +1,7 @@
 import math
 
 from function import list_of_files, lowercase, copy, remove_punctuation, tf_a_file, list_of_import, list_of_export, idf, \
-    tf_total, tf_idf
+    tf_total, tf_idf, tf_idf2
 
 speeches_directory = "./speeches"
 cleaned_directory = "./cleaned"
@@ -46,6 +46,6 @@ for i in range(len(list_import)):
 tf_score = tf_total(list_export)
 idf_score = idf(list_export)
 
-
 matrix_tfidf = tf_idf(list_export)
-unique_words = list(set(tf_score.keys()))
+
+print(tf_idf2(list_export))

@@ -1,10 +1,10 @@
 import math
 
-from function import list_of_files, lowercase, copy, remove_punctuation, tf_a_file, list_of_import, list_of_export, idf, \
-    tf_total, tf_idf, tf_idf2
+from function import list_of_files, lowercase, copy, remove_punctuation, list_of_import, list_of_export, idf, \
+    tf_total, tf_idf_matrix, less_important_words
 
-speeches_directory = "./speeches"
-cleaned_directory = "./cleaned"
+speeches_directory = "./speeches/"
+cleaned_directory = "./cleaned/"
 
 speechesNominationList = list_of_files(speeches_directory, "txt")
 cleanedNominationList = list_of_files(cleaned_directory, "txt")
@@ -37,6 +37,7 @@ print("\n")
 list_import = list_of_import(speechesNominationList)
 list_export = list_of_export(cleanedNominationList)
 
+
 for i in range(len(list_import)):
     copy(list_import[i], list_export[i])
     remove_punctuation(list_export[i])
@@ -46,6 +47,5 @@ for i in range(len(list_import)):
 tf_score = tf_total(list_export)
 idf_score = idf(list_export)
 
-matrix_tfidf = tf_idf(list_export)
-
-print(tf_idf2(list_export))
+print(tf_idf_matrix(list_export))
+print(less_important_words(list_export))

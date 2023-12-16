@@ -94,39 +94,36 @@ def idf(list_export):
     return tf_score
 
 
-def tf_idf(list_of_file_in_directory):
-    files = list_of_file_in_directory
+def tf_idf_matrix(list_export):
+    idf_global = idf(list_export)
+    tf_idf = {}
 
-    tf_score = tf_total(files)
-    idf_score = idf(files)
+    all_files = {}
+    for file in list_export:
+        all_files[file] = tf_a_file(file)
 
-    unique_words = list(set(tf_score.keys()))
-    print(unique_words)
-
-    tfidf = []
-
-    for word in unique_words:
-        tfidf_line = []
-        for file in files:
-            tf = tf_a_file(file)
-            tf_value = tf.get(word, 0)
-            idf_value = idf_score.get(word, 0)
-            tfidf_value = tf_value * idf_value
-            tfidf_line.append(tfidf_value)
-        tfidf.append(tfidf_line)
-
-    return tfidf
-
-
-
-'''''''''
-def tf_idf2(list_export):
-    tf_score = tf_total(list_export)
-    idf_score = idf(list_export)
-    unique_words = list(set(tf_score.keys()))
-
-    for i in unique_words:
-        for j in list_export:
-            tf_idf[i][j] = tf_score[i][j] * idf_score[i]
+    for word in idf_global:
+        tf_idf[word] = {}  # On crée une nouvelle ligne dans la matrice
+        for file in all_files:
+            tf = all_files[file]  # On récupère le tf du fichier
+            if word in tf:
+                tf_idf[word][file] = tf[word] * idf_global[word]
+            else:
+                tf_idf[word][file] = 0  # Si le mot n'est pas dans le fichier on rajoute un 0 à sa valeur
     return tf_idf
-'''
+
+
+def less_important_words(list_export):
+
+    matrix = tf_idf_matrix(list_export)
+
+    less_important_words_list = []
+    for word in matrix:
+        score_sum = 0
+        for text in matrix[word]:
+            score_sum += matrix[word][text]
+        score = score_sum / len(list_export)
+        if score <= 0:
+            less_important_words_list.append(word)
+
+    return less_important_words_list

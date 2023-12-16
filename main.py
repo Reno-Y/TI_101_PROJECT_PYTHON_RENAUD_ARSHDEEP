@@ -8,19 +8,14 @@ from function import (
     remove_punctuation,
     list_of_import,
     list_of_export,
-    idf,
-    tf_total,
-    most_repeated_words)
+    MostRepeatedWords,
+    tf_idf_matrix)
 
 SPEECHES_DIRECTORY_LIST = "./speeches/"
 CLEANED_DIRECTORY = "./cleaned/"
 
 speechesNominationList = list_of_files(SPEECHES_DIRECTORY_LIST, "txt")
 cleanedNominationList = list_of_files(CLEANED_DIRECTORY, "txt")
-
-print("Voici les noms des présidents ayant fait des discours : ")
-for Name, LastName in association_of_names(speechesNominationList).items():
-    print(Name, LastName)
 
 list_import = list_of_import(speechesNominationList)
 list_export = list_of_export(cleanedNominationList)
@@ -30,7 +25,18 @@ for i in range(len(list_import)):
     remove_punctuation(list_export[i])
     toLowercase(list_export[i], list_export[i])
 
-tf_score = tf_total(list_export)
-idf_score = idf(list_export)
 
-print(most_repeated_words(cleanedNominationList, "Chirac"))
+for word, values in tf_idf_matrix(list_export).items():
+    print(f"{word} :{values}")
+
+
+
+PRESIDENT_TO_SEARCH = str(input("Of which president you want to know is most repeated word ? "))
+
+while PRESIDENT_TO_SEARCH not in association_of_names(cleanedNominationList).values():
+    print(PRESIDENT_TO_SEARCH, " is not in the list of presidents")
+    PRESIDENT_TO_SEARCH = str(input("Of which president you want to know is most repeated word ? "))
+
+print(MostRepeatedWords(speechesNominationList, PRESIDENT_TO_SEARCH))
+
+print(less_important_words(list_export))

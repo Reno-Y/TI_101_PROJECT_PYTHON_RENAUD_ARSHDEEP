@@ -3,7 +3,7 @@ import math
 from collections import defaultdict
 
 
-def List_of_files(directory, extension):
+def list_of_files(directory, extension):
     files_names = []
 
     for filename in os.listdir(directory):
@@ -122,6 +122,8 @@ def termsFrequency(words):
     for word in words:
         if word not in word_count:
             word_count[word] = 1
+        else:
+            word_count[word] += 1
 
     return word_count
 
@@ -132,6 +134,15 @@ def termsFrequencyOfFile(file):
     :return: Renvoie le tf d'un fichier
     """
     mots = open_file(file).split()
+    return termsFrequency(mots)
+
+
+def TermFrequencyOfAText(text):
+    """
+    :param text: le texte à analyser
+    :return: Renvoie le tf d'un texte
+    """
+    mots = text.split()
     return termsFrequency(mots)
 
 
@@ -157,15 +168,23 @@ def idf(list_export):
     :param list_export: liste des fichiers des à traiter
     :return: le score idf de tous les mots dans les textes d'un répertoire
     """
+    idf_score = {}
     tf_score = tf_total(list_export)
     nb_documents = len(list_export)
 
+    for i in tf_score:
+        idf_score[i] = round(math.log10((nb_documents / tf_score[i]) + 1), 2)
+    return idf_score
+
+
+def idf_specific_list(list_of_file, tf_score):
+    nb_documents = len(list_of_file)
     for i in tf_score:
         tf_score[i] = round(math.log10((nb_documents / tf_score[i]) + 1), 2)
     return tf_score
 
 
-def tf_idf_matrix(list_export):
+def tf_idf(list_export):
     """
     :param list_export: list des fichiers dans le répertoire cleaned
     :return: une matrice tf idf avec les mots en ligne et les fichiers en colonne
@@ -177,7 +196,6 @@ def tf_idf_matrix(list_export):
     all_files = {}
     for file in list_export:
         all_files[file] = termsFrequencyOfFile(file)
-
     for word in idf_global:
         tf_idf[word] = {}  # On crée une nouvelle ligne dans la matrice
         for file in all_files:
@@ -189,6 +207,17 @@ def tf_idf_matrix(list_export):
     return tf_idf
 
 
+def tf_idf_matrix(list_export):
+    tf_idf_with_file = tf_idf(list_export)
+    final_matrix = {}
+
+    for word, score in tf_idf_with_file.items():
+        values_for_word = list(score.values())
+        final_matrix[word] = values_for_word
+
+    return final_matrix
+
+
 def less_important_words(list_export):
     """
     créer une liste des mots les moins importants
@@ -196,7 +225,7 @@ def less_important_words(list_export):
     :return: une liste des mots les moins importants
     """
 
-    matrix = tf_idf_matrix(list_export)
+    matrix = tf_idf(list_export)
 
     less_important_words_list = []
     for word in matrix:
@@ -211,14 +240,12 @@ def less_important_words(list_export):
 
 
 def MostRepeatedWords(speeches, president_name):
-    president_speeches = []
-    if president_name in extraction_of_presidents_names(speeches):
-        print(president_name)
-        speech = extraction_of_presidents_names(speeches)[president_name]
-        print(speech)
-        president_speeches.append(speech)
-    else:
-        print("Le président n'est pas dans la liste")
-    return president_speeches
+    president_speeches = extraction_of_presidents_names(speeches)[president_name]
 
+    for file in president_speeches:
+        location = "./cleaned/" + file
+        all_text = open_file(location)
 
+    tf = TermFrequencyOfAText(all_text)
+
+    return tf

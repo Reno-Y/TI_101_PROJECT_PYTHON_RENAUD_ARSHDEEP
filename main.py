@@ -1,51 +1,36 @@
 import math
 
-from function import list_of_files, lowercase, copy, remove_punctuation, list_of_import, list_of_export, idf, \
-    tf_total, tf_idf_matrix, less_important_words
+from function import (
+    association_of_names,
+    list_of_files,
+    toLowercase,
+    copy,
+    remove_punctuation,
+    list_of_import,
+    list_of_export,
+    idf,
+    tf_total,
+    most_repeated_words)
 
-speeches_directory = "./speeches/"
-cleaned_directory = "./cleaned/"
+SPEECHES_DIRECTORY_LIST = "./speeches/"
+CLEANED_DIRECTORY = "./cleaned/"
 
-speechesNominationList = list_of_files(speeches_directory, "txt")
-cleanedNominationList = list_of_files(cleaned_directory, "txt")
-
-listNames = []
-names = []
-
-for i in range(len(speechesNominationList)):
-    speeches_without_numbers = str(speechesNominationList[i][11:-4])
-    listNames.append(speeches_without_numbers)
-
-for i in listNames:
-
-    if i[-1].isdigit():
-        name = i[:-1]
-    else:
-        name = i
-
-    names.append(name)
-
-presidentNames = set(names)
-presidentNames = list(presidentNames)
+speechesNominationList = list_of_files(SPEECHES_DIRECTORY_LIST, "txt")
+cleanedNominationList = list_of_files(CLEANED_DIRECTORY, "txt")
 
 print("Voici les noms des présidents ayant fait des discours : ")
-
-for i in range(len(presidentNames)):
-    print(presidentNames[i], end=", ")
-print("\n")
+for Name, LastName in association_of_names(speechesNominationList).items():
+    print(Name, LastName)
 
 list_import = list_of_import(speechesNominationList)
 list_export = list_of_export(cleanedNominationList)
 
-
 for i in range(len(list_import)):
     copy(list_import[i], list_export[i])
     remove_punctuation(list_export[i])
-    lowercase(list_export[i], list_export[i])
-
+    toLowercase(list_export[i], list_export[i])
 
 tf_score = tf_total(list_export)
 idf_score = idf(list_export)
 
-print(tf_idf_matrix(list_export))
-print(less_important_words(list_export))
+print(most_repeated_words(cleanedNominationList, "Chirac"))

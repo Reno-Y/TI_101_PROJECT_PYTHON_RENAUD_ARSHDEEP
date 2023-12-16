@@ -3,7 +3,7 @@ import math
 from collections import defaultdict
 
 
-def list_of_files(directory, extension):
+def List_of_files(directory, extension):
     files_names = []
 
     for filename in os.listdir(directory):
@@ -13,6 +13,10 @@ def list_of_files(directory, extension):
 
 
 def list_of_import(speecherNominationList):
+    """
+    :param speecherNominationList: liste des fichiers dans le répertoire speeches
+    :return: une liste des fichiers dans le répertoire speeches
+    """
     temp_list = []
     for i in range(len(speecherNominationList)):
         file_path = "./speeches/" + str(speecherNominationList[i])
@@ -21,11 +25,50 @@ def list_of_import(speecherNominationList):
 
 
 def list_of_export(cleanedNominationList):
+    """
+    :param cleanedNominationList: liste des fichiers dans le répertoire cleaned
+    :return: une liste des fichiers dans le répertoire cleaned
+    """
     temp_list = []
     for i in range(len(cleanedNominationList)):
         file_path = "./cleaned/" + str(cleanedNominationList[i])
         temp_list.append(file_path)
     return temp_list
+
+
+LastNames_Names = {"Hollande": "François", "Chirac": "Jacques", "Giscard_dEstaing": "Valéry", "Macron": "Emmanuel",
+                   "Mitterrand": "François", "Sarkozy": "Nicolas"}
+
+
+def extraction_of_presidents_names(speeches):
+    """
+    :param speeches: liste des fichiers dans le répertoire speeches
+    :return: un dictionnaire associant président : list[fichier]
+    """
+    association = {}
+    for speech in speeches:
+        if speech[:11] == "Nomination_" and speech[-4:] == ".txt":
+            name = speech[11:-4]
+            if name[-1].isdigit():
+                name = name[:-1]
+            if name not in association:
+                association[name] = []
+            association[name].append(speech)
+
+    return association
+
+
+def association_of_names(speeches):
+    """
+    :param speeches: liste des fichiers dans le répertoire speeches
+    :return: une asso
+    """
+    Name_LastNames = {}
+    for name in extraction_of_presidents_names(speeches):
+        Name_LastNames[name] = LastNames_Names[name]
+    Name_LastNames = dict(map(reversed, Name_LastNames.items()))
+
+    return Name_LastNames
 
 
 def open_file(path):
@@ -44,6 +87,11 @@ def copy(old_file, new_file):
 
 
 def remove_punctuation(file):
+    """
+
+    :param file: le fichier à nettoyer
+    :return:
+    """
     text = open_file(file)
     characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' ', ':': ' ', ';': ' ', '`': ' ',
                             '?': ' '}
@@ -51,13 +99,24 @@ def remove_punctuation(file):
     write_to_file(file, cleaned_text)
 
 
-def lowercase(file, destination_file):
+def toLowercase(file, destination_file):
+    """
+
+    :param file: le fichier à rendre en minuscule
+    :param destination_file: le fichier de destination avec les minuscules
+    :return:
+    """
     text = open_file(file)
     output = text.lower()
     write_to_file(destination_file, output)
 
 
-def tf(words):
+def termsFrequency(words):
+    """
+    Principe du tf
+    :param words: mots à analyser
+    :return: un dictionnaire avec le compte des mots
+    """
     word_count = {}
 
     for word in words:
@@ -67,25 +126,37 @@ def tf(words):
     return word_count
 
 
-def tf_a_file(file):
+def termsFrequencyOfFile(file):
+    """
+    :param file: le fichier à analyser
+    :return: Renvoie le tf d'un fichier
+    """
     mots = open_file(file).split()
-    return tf(mots)
+    return termsFrequency(mots)
 
 
 def tf_total(list_export):
+    """
+    :param list_export: liste des fichiers à tf
+    :return: Renvoi le tf total de tous les fichiers
+    """
     tf_score = {}
     for file in list_export:
-        tf = tf_a_file(file)
+        tf = termsFrequencyOfFile(file)
 
         for term, frequency in tf.items():
             if term not in tf_score:
                 tf_score[term] = frequency
             else:
                 tf_score[term] += frequency
-    return (tf_score)
+    return tf_score
 
 
 def idf(list_export):
+    """
+    :param list_export: liste des fichiers des à traiter
+    :return: le score idf de tous les mots dans les textes d'un répertoire
+    """
     tf_score = tf_total(list_export)
     nb_documents = len(list_export)
 
@@ -95,12 +166,17 @@ def idf(list_export):
 
 
 def tf_idf_matrix(list_export):
+    """
+    :param list_export: list des fichiers dans le répertoire cleaned
+    :return: une matrice tf idf avec les mots en ligne et les fichiers en colonne
+    """
+
     idf_global = idf(list_export)
     tf_idf = {}
 
     all_files = {}
     for file in list_export:
-        all_files[file] = tf_a_file(file)
+        all_files[file] = termsFrequencyOfFile(file)
 
     for word in idf_global:
         tf_idf[word] = {}  # On crée une nouvelle ligne dans la matrice
@@ -114,6 +190,11 @@ def tf_idf_matrix(list_export):
 
 
 def less_important_words(list_export):
+    """
+    créer une liste des mots les moins importants
+    :param list_export: liste des fichiers dans le répertoire cleaned
+    :return: une liste des mots les moins importants
+    """
 
     matrix = tf_idf_matrix(list_export)
 
@@ -127,3 +208,17 @@ def less_important_words(list_export):
             less_important_words_list.append(word)
 
     return less_important_words_list
+
+
+def MostRepeatedWords(speeches, president_name):
+    president_speeches = []
+    if president_name in extraction_of_presidents_names(speeches):
+        print(president_name)
+        speech = extraction_of_presidents_names(speeches)[president_name]
+        print(speech)
+        president_speeches.append(speech)
+    else:
+        print("Le président n'est pas dans la liste")
+    return president_speeches
+
+

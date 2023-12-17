@@ -1,5 +1,5 @@
 from os import listdir, system, name
-from math import log10
+from math import log10, sqrt
 from collections import defaultdict
 
 
@@ -133,8 +133,11 @@ def termsFrequency(words):
     for word in words:
         if word not in word_count:
             word_count[word] = 1
+
         else:
             word_count[word] += 1
+    for word, val in word_count.items():
+        word_count[word] /= len(words)
 
     return word_count
 
@@ -218,7 +221,7 @@ def tf_idf(list_export):
         for file in all_files:
             tf = all_files[file]  # On récupère le tf du fichier
             if word in tf:
-                tf_idf[word][file] = tf[word] * idf_global[word]
+                tf_idf[word][file] = round((tf[word] * idf_global[word]), 2)
             else:
                 tf_idf[word][file] = 0  # Si le mot n'est pas dans le fichier on rajoute un 0 à sa valeur
     return tf_idf
@@ -346,41 +349,215 @@ def search_word(word, most):
         print("-", president_who_spoked_about[i])
     print("\n")
 
-    if most == True :
+    if most == True:
         print("Le président qui a le plus parlé de", '"', word, '"', "est :", president_max)
 
 
+def main_menu():
+    print("1. Accéder aux fonctionnalités de la partie 1")
+    print("2. Accéder au mode Chatbot")
+    print("0. Quitter le programme")
+    print()
+    main_menu_choice()
+
+
+def main_menu_choice():
+    print()
+    choice = int(input("Veuillez choisir une option : "))
+    while choice < 0 or choice > 2:
+        print("Veuillez choisir un nombre entre 1 et 2")
+        choice = int(input("Quel est votre choix ? "))
+    if choice == 0:
+        exit()
+    if choice == 1:
+        menu()
+
+
 def menu():
+    print()
     print("1. Afficher la liste des mots les moins importants")
     print("2. Afficher le(s) mot(s) ayant le score TF-IDF le plus élevé")
     print("3. Afficher le(s) mot(s) le(s) plus répété(s) par Chirac")
     print("4. Afficher le(s) nom(s) du (des) président(s) qui a (ont) parlé de la « Nation » et le plus de fois")
     print("5. Afficher le(s) premier(s) président(s) qui ont parlé de climat")
-    print("0. Quitter le programme")
+    print("0. Quitter le menu des fonctionnalités")
     print()
+    menu_choice()
 
 
 def menu_choice():
+    """
+    Affiche le menu des fonctionnalités ainsi que les résultats souhaités
+    """
     choice = int(input("Veuillez choisir une option : "))
-    while choice < 0 or choice > 6:
-        print("Veuillez choisir un nombre entre 1 et 6")
+    while choice < 0 or choice > 5:
+        print("Veuillez choisir un nombre entre 1 et 5")
         choice = int(input("Quel est votre choix ? "))
+
     if choice == 1:
         print("Les mots les moins importants sont :",
               less_important_words(list_of_export(list_of_files("./cleaned/", "txt"))))
+        print()
+        response = str(input("Continuer ? Y/N"))
+        if response == "y" or "Y" or "yes":
+            menu()
+        else:
+            main_menu()
+
     elif choice == 2:
         print("Le(s) mot(s) ayant le score TF-IDF le plus élevé est :",
               max_tfidf_words(list_of_export(list_of_files("./cleaned/", "txt"))))
+        print()
+        response = str(input("Continuer ? Y/N"))
+        if response == "y" or "Y" or "yes":
+            menu()
+        else:
+            main_menu()
+
     elif choice == 3:
         print("Le(s) mot(s) le(s) plus répété(s) par Chirac est :",
               MostRepeatedWords(list_of_files("./speeches/", "txt"), "Chirac"))
+        print()
+        response = str(input("Continuer ? Y/N"))
+        if response == "y" or "Y" or "yes":
+            menu()
+        else:
+            main_menu()
+
     elif choice == 4:
         print(search_word("nation", True))
+        print()
+        response = str(input("Continuer ? Y/N"))
+        if response == "Y" or "Y" or "yes":
+            menu()
+        else:
+            main_menu()
+
     elif choice == 5:
         print(search_word("climat", False))
-    elif choice == 0:
-        exit()
+        print()
+        response = str(input("Continuer ? Y/N"))
+        if response == "Y" or "Y" or "yes":
+            menu()
+        else:
+            main_menu()
 
+    elif choice == 0:
+        main_menu()
+
+
+def Tokenize_question(question):
+    """
+    :param question: la question à tokenizer
+    :return: la question tokenizée
+    """
+    characters_to_remove = {'"': ' ', ',': ' ', '-': ' ', '.': ' ', "'": ' ', '!': ' ', ':': ' ', ';': ' ', '`': ' ',
+                            '?': ' '}
+    cleaned_text = ''.join(characters_to_remove.get(char, char) for char in question)
+    cleaned_text = cleaned_text.lower()
+    return cleaned_text.split()
+
+
+def Search_Tokenize_Question_in_matrix(question, list_export):
+    """
+    :param question: la question à tokenizer
+    :param list_export: liste des fichiers dans le répertoire cleaned
+    :return: la matrice tf idf de la question
+    """
+    matrix = tf_idf_matrix(list_export)
+    question = Tokenize_question(question)
+    matrix_question = {}
+    for word in question:
+        if word in matrix:
+            matrix_question[word] = matrix[word]
+    return matrix_question
+
+
+def tf_idf_matrix_docs_by_words(list_export):
+    """
+    :param list_export: liste des fichiers dans le répertoire cleaned
+    :return: la matrice idf des mots dans les documents
+    """
+    matrix = []
+    for word, values in tf_idf_matrix(list_export).items():
+        matrix.append(values)
+    matrix_tf_idf = [list(row) for row in zip(*matrix)]
+
+    return matrix_tf_idf
+
+
+def tf_of_a_question(question, list_export):
+    """
+    :param question_tokens: la question à tokenizer
+    :return: le tf de la question
+    """
+    tf_corpus = tf_total(list_export)
+    question_tokens = Tokenize_question(question)
+    tf = {}
+    for word in question_tokens:
+        if word not in tf:
+            tf[word] = 1
+        else:
+            tf[word] += 1
+    for word, val in tf.items():
+        tf[word] /= len(question_tokens)
+
+    for word in tf_corpus:
+        if word not in tf.keys():
+            tf_corpus[word] = 0
+        elif word in tf.keys():
+            tf_corpus[word] = tf[word]
+    return tf_corpus
+
+
+def tf_idf_vector(dict_tf, dict_idf, question):
+    tf_idf_vector = []
+    dict_tf_question = dict_tf
+    dict_idf_total = dict_idf
+    question_tokens = Tokenize_question(question)
+
+    for word, score_idf in dict_idf_total.items():
+        if word in question_tokens:
+            tf_idf_vector.append(dict_tf_question[word] * score_idf)
+        else:
+            tf_idf_vector.append(0)
+    return tf_idf_vector
+
+
+def scalar_product(dict_a, dict_b):
+    product_ab = 0
+    for key in dict_a.keys():
+        product_ab += dict_a[key] * dict_b[key]
+    return product_ab
+
+
+def vector_norm(vector):
+    norm = 0
+    for val in vector:
+        norm += val ** 2
+    norm = sqrt(norm)
+    return norm
+
+
+def similarity(vector_a, vector_b):
+    product_ab = scalar_product(vector_a, vector_b)
+    norm_a = vector_norm(vector_a)
+    norm_b = vector_norm(vector_b)
+    similarity = product_ab / (norm_b * norm_a)
+    return similarity
+
+
+def document_pertinence(tf_idf_matrix, tf_idf_vector, list_export):
+    """
+    :param tf_idf_matrix: la matrice tf idf des mots dans les documents
+    :param tf_idf_vector: le tf idf de la question
+    :param list_export: liste des fichiers dans le répertoire cleaned
+    :return: la pertinence des documents par rapport à la question
+    """
+    pertinence = {}
+    for i in range(len(tf_idf_matrix)):
+        pertinence[list_export[i]] = similarity(tf_idf_matrix[i], tf_idf_vector)
+    return pertinence
 
 
 if __name__ == "__main__":

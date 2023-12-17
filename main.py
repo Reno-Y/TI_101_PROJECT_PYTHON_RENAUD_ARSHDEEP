@@ -6,10 +6,11 @@ from function import (
     main_menu,
     main_menu_choice,
     idf,
-tf_idf_vector,
+    tf_idf,
+    tf_idf_vector_question,
     tf_of_a_question,
-    tf_total,
-    Search_Tokenize_Question_in_matrix)
+    document_pertinence,
+max_tf_idf_vector_question)
 
 SPEECHES_DIRECTORY_LIST = "./speeches/"
 CLEANED_DIRECTORY = "./cleaned/"
@@ -25,34 +26,17 @@ clean_all_files(list_import, list_export)
 
 question = str(input("Posez votre question : "))
 
-print("tf of a question : ")
-
-print(tf_of_a_question(question, list_export))
-
-print()
 
 
 print("Le tf idf vecteur")
-print(tf_idf_vector(tf_of_a_question(question, list_export), idf(list_export), question))
+vector_question = tf_idf_vector_question(tf_of_a_question(question, list_export), idf(list_export), question)
+matrix_tf_idf = tf_idf(list_export)
 
+print(document_pertinence(vector_question, list_export))
+print()
+print(max_tf_idf_vector_question(vector_question))
 
-
-
-
-"""
-print(Search_Tokenize_Question_in_matrix(question, list_export))
-"""
 
 main_menu()
 
-"""
-question = str(input("Posez votre question : "))
-print(Search_Tokenize_Question_matrix(question, list_export))
-"""
-"""
-if __name__ == "__main__":
-    menu()
-    while True:
-        menu_choice()
-        print("\n")
-"""
+

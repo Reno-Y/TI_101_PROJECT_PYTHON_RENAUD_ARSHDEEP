@@ -510,7 +510,7 @@ def tf_of_a_question(question, list_export):
     return tf_corpus
 
 
-def tf_idf_vector(dict_tf, dict_idf, question):
+def tf_idf_vector_question(dict_tf, dict_idf, question):
     tf_idf_vector = []
     dict_tf_question = dict_tf
     dict_idf_total = dict_idf
@@ -526,8 +526,8 @@ def tf_idf_vector(dict_tf, dict_idf, question):
 
 def scalar_product(dict_a, dict_b):
     product_ab = 0
-    for key in dict_a.keys():
-        product_ab += dict_a[key] * dict_b[key]
+    for file in range(len(dict_a)):
+        product_ab += dict_a[file] * dict_b[file]
     return product_ab
 
 
@@ -543,22 +543,42 @@ def similarity(vector_a, vector_b):
     product_ab = scalar_product(vector_a, vector_b)
     norm_a = vector_norm(vector_a)
     norm_b = vector_norm(vector_b)
-    similarity = product_ab / (norm_b * norm_a)
+    sum_norm_ab = norm_a * norm_b
+    if sum_norm_ab != 0:
+        similarity = product_ab / sum_norm_ab
+    else:
+        similarity = 0
     return similarity
 
 
-def document_pertinence(tf_idf_matrix, tf_idf_vector, list_export):
+def document_pertinence(vector_question, list_export):
     """
-    :param tf_idf_matrix: la matrice tf idf des mots dans les documents
-    :param tf_idf_vector: le tf idf de la question
+    :param vector_question: la matrice tf idf de la question
     :param list_export: liste des fichiers dans le répertoire cleaned
-    :return: la pertinence des documents par rapport à la question
+    :return: le fichier le plus pertinent
     """
-    pertinence = {}
-    for i in range(len(tf_idf_matrix)):
-        pertinence[list_export[i]] = similarity(tf_idf_matrix[i], tf_idf_vector)
-    return pertinence
+    matrix = tf_idf_matrix_docs_by_words(list_export)
+    list_of_scores = []
 
+    for i in range(len(matrix)):
+        list_of_scores.append(similarity(vector_question, matrix[i]))
+
+    most_pertinent = list_export[list_of_scores.index(max(list_of_scores))]
+    return file_equivalent_in_speeches(most_pertinent)
+
+
+def file_equivalent_in_speeches(searched_file):
+    searching_file = searched_file[10:]
+    for file in listdir("./speeches"):
+        if file == searching_file:
+            return "./speeches/" + file
+
+
+def max_tf_idf_vector_question(vector_question):
+
+    for score in vector_question:
+        if score == max(vector_question):
+            return score
 
 if __name__ == "__main__":
     print("Please run the main file instead.")

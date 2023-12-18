@@ -15,5 +15,6 @@ list_import = list_of_import(speechesNominationList)
 list_export = list_of_export(cleanedNominationList)
 
 clean_all_files(list_import, list_export)
+if __name__ == "__main__":
+    MainMenu()
 
-MainMenu()

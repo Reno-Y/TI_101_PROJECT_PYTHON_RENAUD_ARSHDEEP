@@ -305,9 +305,9 @@ def MostRepeatedWords(speeches, president_name):
     tf = TermFrequencyOfAText(all_text)
     exempted_words = ["le", "la", "les", "de", "du", "des", "et", "en", "à", "dans", "un", "une", "au", "aux", "par",
                       "l", "d", "pour", "elle", "il", "ils", "elles", "ce", "cet", "cette", "ces", "qui", "que", "quoi",
-                      "où", "quand", "comment", "pourquoi", "est", "sont", "ont", "a", "doit", "je", "n", "y", "s", "t",
-                      "m", "me", "ma", "mes", "mon", "parce", "que", "veut", "j", "messieurs", "mesdames", "monsieur",
-                      "madame", "mesdemoiselles", "pas", "nous"]
+                      "où", "quand", "est", "sont", "ont", "a", "doit", "je", "n", "y", "s", "t",
+                      "m", "me", "ma", "mes", "mon", "parce", "que", "veut", "j",
+                      "pas", "nous"]
     # Liste des mots à ne pas prendre en compte
 
     max_occurrence = 0
@@ -379,6 +379,7 @@ def main_menu_choice():
     if choice == 2:
         MenuChatBot()
 
+
 def MenuChatBot():
     print()
     print("1. Poser une question")
@@ -386,8 +387,10 @@ def MenuChatBot():
     print()
     MenuChatBotChoice()
 
+
 def MenuChatBotChoice():
     choice = int(input("Veuillez choisir une option : "))
+    print()
     while choice < 0 or choice > 1:
         print("Veuillez choisir un nombre entre 0 et 1")
         choice = int(input("Veuillez choisir une option ? "))
@@ -406,7 +409,12 @@ def MenuChatBotChoice():
 
         print((ResponseOfQuestion(question_token)),
               SentenceOfQuestion(vector_question, dict_tf_question, idf_total, question))
-
+        print()
+        response = str(input("Continuer ? Y/N"))
+        if response == "y" or "Y" or "yes":
+            MenuChatBot()
+        else:
+            MainMenu()
 
 def Menu():
     print()

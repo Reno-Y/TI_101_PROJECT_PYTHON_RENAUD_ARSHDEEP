@@ -3,14 +3,15 @@ from function import (
     clean_all_files,
     list_of_import,
     list_of_export,
-    main_menu,
+    MainMenu,
     main_menu_choice,
-    idf,
-    tf_idf,
-    tf_idf_vector_question,
-    tf_of_a_question,
-    document_pertinence,
-max_tf_idf_vector_question)
+    InverseDocumentFrequency,
+    TFIDF,
+    TFIDFVectorQuestion,
+    TFOfAQuestion,
+    DocumentPertinence,
+    MaxTFIDFVectorQuestion,
+    SentenceOfQuestion)
 
 SPEECHES_DIRECTORY_LIST = "./speeches/"
 CLEANED_DIRECTORY = "./cleaned/"
@@ -23,20 +24,17 @@ list_export = list_of_export(cleanedNominationList)
 
 clean_all_files(list_import, list_export)
 
-
 question = str(input("Posez votre question : "))
 
-
+print(TFOfAQuestion(question, list_export))
 
 print("Le tf idf vecteur")
-vector_question = tf_idf_vector_question(tf_of_a_question(question, list_export), idf(list_export), question)
-matrix_tf_idf = tf_idf(list_export)
+vector_question = TFIDFVectorQuestion(TFOfAQuestion(question, list_export), InverseDocumentFrequency(list_export), question)
+matrix_tf_idf = TFIDF(list_export)
 
-print(document_pertinence(vector_question, list_export))
+print(DocumentPertinence(vector_question, list_export))
 print()
-print(max_tf_idf_vector_question(vector_question))
-
-
-main_menu()
-
+print(MaxTFIDFVectorQuestion(vector_question))
+print()
+print(SentenceOfQuestion(vector_question))
 

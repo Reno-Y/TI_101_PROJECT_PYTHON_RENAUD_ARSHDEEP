@@ -368,7 +368,12 @@ def MainMenu():
 
 def main_menu_choice():
     print()
-    choice = int(input("Veuillez choisir une option : "))
+    choice = input("Veuillez choisir une option : ")
+
+    while type(choice) == str:
+        print("Veuillez entrez un nombre")
+        choice = int(input("veuillez choisir une option : "))
+
     while choice < 0 or choice > 2:
         print("Veuillez choisir un nombre entre 0 et 2")
         choice = int(input("Quel est votre choix ? "))
@@ -389,8 +394,13 @@ def MenuChatBot():
 
 
 def MenuChatBotChoice():
-    choice = int(input("Veuillez choisir une option : "))
+    choice = input("Veuillez choisir une option : ")
     print()
+
+    while type(choice) == str:
+        print("Veuillez entrez un nombre")
+        choice = int(input("veuillez choisir une option : "))
+
     while choice < 0 or choice > 1:
         print("Veuillez choisir un nombre entre 0 et 1")
         choice = int(input("Veuillez choisir une option ? "))
@@ -432,8 +442,12 @@ def MenuChoice():
     """
     Affiche le menu des fonctionnalités ainsi que les résultats souhaités
     """
-    choice = int(input("Veuillez choisir une option : "))
-    while choice < 0 or choice > 5:
+    choice = input("Veuillez choisir une option : ")
+    while type(choice) == str:
+        print("Veuillez entrez un nombre")
+        choice = int(input("veuillez choisir une option : "))
+
+    while choice < 0 or choice > 5 :
         print("Veuillez choisir un nombre entre 1 et 5")
         choice = int(input("Quel est votre choix ? "))
 

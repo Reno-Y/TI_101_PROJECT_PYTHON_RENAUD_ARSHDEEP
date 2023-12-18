@@ -376,11 +376,36 @@ def main_menu_choice():
         exit()
     if choice == 1:
         Menu()
-"""
     if choice == 2:
         MenuChatBot()
-"""
 
+def MenuChatBot():
+    print()
+    print("1. Poser une question")
+    print("0. Quitter le menu Chatbot")
+    print()
+    MenuChatBotChoice()
+
+def MenuChatBotChoice():
+    choice = int(input("Veuillez choisir une option : "))
+    while choice < 0 or choice > 1:
+        print("Veuillez choisir un nombre entre 0 et 1")
+        choice = int(input("Veuillez choisir une option ? "))
+
+    if choice == 0:
+        MainMenu()
+    elif choice == 1:
+        question = str(input("Posez votre question : "))
+        list_export = list_of_export(list_of_files("./cleaned/", "txt"))
+        dict_tf_question = TFOfAQuestion(question, list_export)
+        idf_total = InverseDocumentFrequency(list_export)
+
+        question_token = TokenizeQuestion(question)
+
+        vector_question = TFIDFVectorQuestion(dict_tf_question, idf_total, question)
+
+        print((ResponseOfQuestion(question_token)),
+              SentenceOfQuestion(vector_question, dict_tf_question, idf_total, question))
 
 
 def Menu():
@@ -534,6 +559,26 @@ def TFIDFVectorQuestion(dict_tf, dict_idf, question):
     return tf_idf_vector
 
 
+def WordOfTFIDFVectorQuestion(dict_tf, dict_idf, question):
+    dict_tf_question = dict_tf
+    dict_idf_total = dict_idf
+    question_tokens = TokenizeQuestion(question)
+    word_dict = {}
+    max_word = ""
+
+    for word, score_idf in dict_idf_total.items():
+        if word in question_tokens:
+            word_dict[word] = dict_tf_question[word] * score_idf
+        else:
+            word_dict[word] = 0
+
+    for word, score in word_dict.items():
+        if score == max(word_dict.values()):
+            max_word = word
+
+    return max_word
+
+
 def ScalarProduct(dict_a, dict_b):
     product_ab = 0
     for file in range(len(dict_a)):
@@ -590,12 +635,28 @@ def MaxTFIDFVectorQuestion(vector_question):
             return score
 
 
-def SentenceOfQuestion(question_vector):
+def SentenceOfQuestion(question_vector, dict_tf, dict_idf, question):
     file = DocumentPertinence(question_vector, list_of_export(list_of_files("./cleaned/", "txt")))
     text = open_file(file).split(".")
+    word = WordOfTFIDFVectorQuestion(dict_tf, dict_idf, question)
     for sentence in text:
-        if MaxTFIDFVectorQuestion(question_vector) in sentence:
+        if word in sentence:
             return sentence
+
+
+def ResponseOfQuestion(question):
+    question_words = TokenizeQuestion(question)
+    question_starters = {
+        "Comment": "Après analyse, ",
+        "Pourquoi": "Car, ",
+        "Peux-tu": "Oui, bien sûr!"
+    }
+
+    for word in question_words:
+        if word in question_starters:
+            return question_starters[word]
+        else:
+            return "Voici votre réponse :"
 
 
 if __name__ == "__main__":
